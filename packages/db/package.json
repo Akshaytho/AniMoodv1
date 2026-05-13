@@ -14,6 +14,7 @@
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
     "seed:budget": "tsx src/seed-budget.ts",
+    "seed:xlsx": "tsx src/seed-from-xlsx.ts",
     "studio": "drizzle-kit studio",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "drizzle-orm": "^0.36.4",
+    "node-xlsx": "^0.24.0",
     "postgres": "^3.4.5"
   },
   "devDependencies": {
