@@ -4,6 +4,8 @@ import type { Sql } from 'postgres';
 import type { DbClient } from '@animood/db';
 import { healthRouter } from './routes/health';
 import { authRouter, type AuthRouterDeps } from './routes/auth';
+import { mappingsRouter } from './routes/mappings';
+import { draftsRouter } from './routes/drafts';
 
 export interface CreateAppDeps {
   db: DbClient;
@@ -19,6 +21,8 @@ export function createApp(deps: CreateAppDeps): Express {
 
   app.use(healthRouter(deps.sql));
   app.use(authRouter(deps.auth));
+  app.use(mappingsRouter(deps.db, deps.auth.sessionSecret));
+  app.use(draftsRouter(deps.db, deps.auth.sessionSecret));
 
   app.use((_req, res) => {
     res.status(404).json({ error: 'not_found' });
