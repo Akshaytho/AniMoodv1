@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export interface MappingRow {
   id: number;
@@ -81,9 +82,9 @@ export function MappingsQueue({ initial }: { initial: MappingRow[] }) {
           <>
             <div className="flex items-baseline justify-between mb-3">
               <h2 className="text-xl font-semibold">{current.sourceName ?? `(source ${current.type})`}</h2>
-              <span className="text-xs text-muted">
-                #{current.id} · {cursor + 1} / {items.length}
-              </span>
+              <Link href={`/dashboard/mapping/${current.id}`} className="text-xs text-muted hover:text-accent">
+                #{current.id} · {cursor + 1} / {items.length} →
+              </Link>
             </div>
             <div className="flex gap-2 text-xs mb-4">
               <Tag label={`type · ${current.type}`} />
