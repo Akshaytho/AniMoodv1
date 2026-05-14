@@ -149,6 +149,84 @@ export async function getSimilarTitles(titleId: number, limit = 6): Promise<Simi
     .filter((r): r is SimilarTitleRow => r !== null);
 }
 
+export interface EmotionWithTitles extends Emotion {
+  titles: Array<{
+    title: Title;
+    intensity: number | null;
+    confidence: string;
+    evidenceNotes: string;
+  }>;
+  /** Emotions that co-occur in the same titles, ranked by overlap count. */
+  related: Array<{ emotion: Emotion; overlapCount: number }>;
+}
+
+export async function getEmotionBySlug(slug: string): Promise<EmotionWithTitles | null> {
+  const { db: drizzle } = db();
+  const [e] = await drizzle.select().from(emotions).where(eq(emotions.slug, slug)).limit(1);
+  if (!e) return null;
+
+  // All non-retired title-emotion mappings targeting this emotion, with the title
+  const rows = await drizzle
+    .select({
+      title: titles,
+      intensity: mappings.intensity,
+      confidence: mappings.confidence,
+      evidenceNotes: mappings.evidenceNotes,
+    })
+    .from(mappings)
+    .innerJoin(titles, eq(mappings.sourceId, titles.id))
+    .where(
+      and(
+        eq(mappings.type, 'title_emotion'),
+        eq(mappings.sourceTable, 'titles'),
+        eq(mappings.targetTable, 'emotions'),
+        eq(mappings.targetId, e.id),
+        ne(mappings.status, 'retired'),
+      ),
+    )
+    .orderBy(desc(mappings.intensity), desc(mappings.confidence));
+
+  // Related emotions: find titles mapped to this emotion, then count other emotions in those titles
+  const titleIds = rows.map((r) => r.title.id);
+  let related: Array<{ emotion: Emotion; overlapCount: number }> = [];
+  if (titleIds.length > 0) {
+    const siblings = await drizzle
+      .select({
+        emotionId: mappings.targetId,
+      })
+      .from(mappings)
+      .where(
+        and(
+          eq(mappings.type, 'title_emotion'),
+          eq(mappings.sourceTable, 'titles'),
+          eq(mappings.targetTable, 'emotions'),
+          ne(mappings.targetId, e.id),
+          ne(mappings.status, 'retired'),
+          inArray(mappings.sourceId, titleIds),
+        ),
+      );
+    const counts = new Map<number, number>();
+    for (const s of siblings) counts.set(s.emotionId, (counts.get(s.emotionId) ?? 0) + 1);
+    const relatedIds = Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 8);
+    if (relatedIds.length > 0) {
+      const relatedEmoRows = await drizzle
+        .select()
+        .from(emotions)
+        .where(inArray(emotions.id, relatedIds.map(([id]) => id)));
+      related = relatedIds
+        .map(([id, count]) => {
+          const emo = relatedEmoRows.find((x) => x.id === id);
+          return emo ? { emotion: emo, overlapCount: count } : null;
+        })
+        .filter((r): r is { emotion: Emotion; overlapCount: number } => r !== null);
+    }
+  }
+
+  return { ...e, titles: rows, related };
+}
+
 /** Top emotions across all titles — used as a fallback / discovery rail. */
 export async function getTopEmotionsForDiscovery(limit = 12): Promise<Emotion[]> {
   const { db: drizzle } = db();
