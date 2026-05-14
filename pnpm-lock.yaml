@@ -118,6 +118,9 @@ importers:
       '@animood/config':
         specifier: workspace:*
         version: link:../../packages/config
+      '@animood/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@animood/seo':
         specifier: workspace:*
         version: link:../../packages/seo
@@ -127,12 +130,18 @@ importers:
       '@animood/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      drizzle-orm:
+        specifier: ^0.36.4
+        version: 0.36.4(@types/react@19.2.14)(postgres@3.4.9)(react@19.0.0)
       framer-motion:
         specifier: ^11.18.0
         version: 11.18.2(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next:
         specifier: 15.1.4
         version: 15.1.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      postgres:
+        specifier: ^3.4.5
+        version: 3.4.9
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -142,6 +151,9 @@ importers:
       react-force-graph-2d:
         specifier: ^1.29.1
         version: 1.29.1(react@19.0.0)
+      server-only:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@types/node':
         specifier: ^20.14.10
@@ -2535,6 +2547,9 @@ packages:
     resolution: {integrity: sha512-x0RTqQel6g5SY7Lg6ZreMmsOzncHFU7nhnRWkKgWuMTu5NN0DR5oruckMqRvacAN9d5w6ARnRBXl9xhDCgfMeA==}
     engines: {node: '>= 0.8.0'}
 
+  server-only@0.0.1:
+    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
+
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
 
@@ -4722,6 +4737,8 @@ snapshots:
       send: 0.19.2
     transitivePeerDependencies:
       - supports-color
+
+  server-only@0.0.1: {}
 
   setprototypeof@1.2.0: {}
 
