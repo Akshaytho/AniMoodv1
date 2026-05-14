@@ -227,6 +227,136 @@ export async function getEmotionBySlug(slug: string): Promise<EmotionWithTitles 
   return { ...e, titles: rows, related };
 }
 
+export interface DiscoverFilter {
+  q?: string;
+  emotionSlug?: string;
+  type?: 'anime' | 'manga' | 'manhwa' | 'manhua' | 'light_novel';
+  minIntensity?: number;
+  sort?: 'top' | 'recent' | 'name';
+}
+
+export interface DiscoverRow {
+  title: Title;
+  topEmotions: Array<{
+    emotion: Pick<Emotion, 'id' | 'slug' | 'name'>;
+    intensity: number | null;
+  }>;
+  bestMatch?: { emotionName: string; intensity: number | null } | undefined;
+}
+
+/**
+ * Returns titles filtered + ranked for the /discover page. Phase A: in-memory
+ * sort after pulling the 30 seeded titles (data is small enough).
+ */
+export async function getDiscoverResults(filter: DiscoverFilter): Promise<DiscoverRow[]> {
+  const { db: drizzle } = db();
+
+  // Optional emotion filter — resolve slug to id once
+  let emotionFilterId: number | null = null;
+  if (filter.emotionSlug) {
+    const [e] = await drizzle
+      .select({ id: emotions.id })
+      .from(emotions)
+      .where(eq(emotions.slug, filter.emotionSlug))
+      .limit(1);
+    if (e) emotionFilterId = e.id;
+  }
+
+  // Base title pull (with optional type filter)
+  const baseConditions = filter.type ? [eq(titles.type, filter.type)] : [];
+  const allTitles = await drizzle
+    .select()
+    .from(titles)
+    .where(baseConditions.length > 0 ? and(...baseConditions) : undefined);
+
+  if (allTitles.length === 0) return [];
+
+  const titleIds = allTitles.map((t) => t.id);
+
+  // Pull all (non-retired) title_emotion mappings for these titles
+  const mappingConditions: SQL[] = [
+    eq(mappings.type, 'title_emotion'),
+    eq(mappings.sourceTable, 'titles'),
+    eq(mappings.targetTable, 'emotions'),
+    ne(mappings.status, 'retired'),
+    inArray(mappings.sourceId, titleIds),
+  ];
+  if (typeof filter.minIntensity === 'number') {
+    mappingConditions.push(sql`${mappings.intensity} >= ${filter.minIntensity}`);
+  }
+  const allMappings = await drizzle
+    .select({
+      titleId: mappings.sourceId,
+      emotionId: mappings.targetId,
+      intensity: mappings.intensity,
+      confidence: mappings.confidence,
+    })
+    .from(mappings)
+    .where(and(...mappingConditions));
+
+  // Index emotions for label lookup
+  const allEmotions = await drizzle
+    .select({ id: emotions.id, slug: emotions.slug, name: emotions.name })
+    .from(emotions);
+  const emoById = new Map(allEmotions.map((e) => [e.id, e] as const));
+
+  // Build per-title rows
+  const rows: DiscoverRow[] = allTitles.map((t) => {
+    const tMappings = allMappings
+      .filter((m) => m.titleId === t.id)
+      .sort((a, b) => (b.intensity ?? 0) - (a.intensity ?? 0));
+    const topEmotions = tMappings.slice(0, 4).flatMap((m) => {
+      const emo = emoById.get(m.emotionId);
+      return emo ? [{ emotion: emo, intensity: m.intensity }] : [];
+    });
+    const bestForFilter = emotionFilterId
+      ? tMappings.find((m) => m.emotionId === emotionFilterId)
+      : null;
+    return {
+      title: t,
+      topEmotions,
+      ...(bestForFilter
+        ? {
+            bestMatch: {
+              emotionName: emoById.get(bestForFilter.emotionId)?.name ?? '?',
+              intensity: bestForFilter.intensity,
+            },
+          }
+        : {}),
+    };
+  });
+
+  let filtered = rows;
+  if (emotionFilterId !== null) {
+    filtered = filtered.filter((r) => r.bestMatch !== undefined);
+  }
+  if (filter.q && filter.q.trim().length > 0) {
+    const needle = filter.q.toLowerCase();
+    filtered = filtered.filter((r) => r.title.name.toLowerCase().includes(needle));
+  }
+
+  // Sort
+  const sort = filter.sort ?? 'top';
+  filtered.sort((a, b) => {
+    if (sort === 'name') return a.title.name.localeCompare(b.title.name);
+    if (sort === 'recent') return (b.title.releaseYear ?? 0) - (a.title.releaseYear ?? 0);
+    // 'top' — by bestMatch intensity if filtering by emotion, otherwise by max top-emotion intensity
+    const ai = a.bestMatch?.intensity ?? a.topEmotions[0]?.intensity ?? 0;
+    const bi = b.bestMatch?.intensity ?? b.topEmotions[0]?.intensity ?? 0;
+    return bi - ai;
+  });
+
+  return filtered;
+}
+
+export async function getAllEmotionsForFilter(): Promise<Pick<Emotion, 'id' | 'slug' | 'name'>[]> {
+  const { db: drizzle } = db();
+  return drizzle
+    .select({ id: emotions.id, slug: emotions.slug, name: emotions.name })
+    .from(emotions)
+    .orderBy(emotions.name);
+}
+
 /** Top emotions across all titles — used as a fallback / discovery rail. */
 export async function getTopEmotionsForDiscovery(limit = 12): Promise<Emotion[]> {
   const { db: drizzle } = db();
