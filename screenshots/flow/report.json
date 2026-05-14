@@ -1,0 +1,95 @@
+{
+  "base": "http://localhost:3002",
+  "startedAt": "2026-05-14T12:53:55.732Z",
+  "steps": [
+    {
+      "step": "home.load",
+      "url": "http://localhost:3002",
+      "status": 200,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/01-home-load.png",
+      "consoleErrorsSoFar": 0
+    },
+    {
+      "step": "home.poster-hover",
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/02-poster-hover.png",
+      "posterCount": 10
+    },
+    {
+      "step": "poster.click",
+      "url": "http://localhost:3002/anime/vinland-saga",
+      "status": 200,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/03-anime-page.png"
+    },
+    {
+      "step": "cta.discover-now",
+      "url": "http://localhost:3002/discover",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/04-discover.png"
+    },
+    {
+      "step": "mood-pill.click",
+      "url": "http://localhost:3002/discover?mood=lonely",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/05-mood-lonely.png"
+    },
+    {
+      "step": "nav.emotional-map",
+      "url": "http://localhost:3002/map",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/06-emotional-map.png"
+    },
+    {
+      "step": "search.type+enter",
+      "typedValue": "vinland",
+      "urlAfterEnter": "http://localhost:3002/discover?q=vinland",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/08-search-after-enter.png"
+    },
+    {
+      "step": "mascot.start-quiz",
+      "url": "http://localhost:3002/quiz",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/09-quiz.png"
+    },
+    {
+      "step": "topbar.bell",
+      "ariaDisabled": "true",
+      "title": "Notifications arrive in Phase 4",
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/10-bell-state.png"
+    },
+    {
+      "step": "topbar.user-hover",
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/11-user-hover.png"
+    },
+    {
+      "step": "keyboard.tab-3-times",
+      "focused": {
+        "tag": "A",
+        "text": "Discover by Emotion"
+      },
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/12-keyboard-focus.png"
+    },
+    {
+      "step": "mobile.load",
+      "viewport": "390x844",
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/13-mobile.png"
+    },
+    {
+      "step": "graph.click-center",
+      "clickedAt": {
+        "x": 774,
+        "y": 687.21875
+      },
+      "url": "http://localhost:3002/emotion/loneliness",
+      "content404": false,
+      "file": "/Users/thotaakshay/Documents/Animoodv1/screenshots/flow/14-graph-click.png"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "kind": "console",
+      "msg": "A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:\n\n- A server/client branch `if (typeof window !== 'undefined')`.\n- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.\n- Date formatting in a user's locale which doesn't match the server.\n- External changing data without sending a snapshot of it along with the HTML.\n- Invalid HTML tag nesting.\n\nIt can also happen if the client has a browser extension installed which messes with the HTML before React loaded.\n\n%s%s https://react.dev/link/hydration-mismatch \n\n  ...\n    <InnerScrollAndFocusHandler segmentPath={[...]} focusAndScrollRef={{apply:false, ...}}>\n      <ErrorBoundary errorComponent={undefined} errorStyles={undefined} errorScripts={undefined}>\n        <LoadingBoundary loading={null}>\n          <HTTPAccessFallbackBoundary notFound={undefined} forbidden={undefined} unauthorized={undefined}>\n            <RedirectBoundary>\n              <RedirectErrorBoundary router={{...}}>\n                <InnerLayoutRouter parallelRouterKey=\"children\" url=\"/anime/vin...\" tree={[...]} childNodes={Map} ...>\n                  <AnimePage>\n                    <Stub>\n                      <AppShell>\n                        <div className=\"flex min-h...\">\n                          <SidebarColumn>\n                          ...\n                            <header className=\"h-topbar b...\">\n                              <form onSubmit={function onSubmit} className=\"flex-1 max...\">\n                                <div className=\"relative\">\n                                  <svg>\n                                  <input\n                                    type=\"search\"\n                                    placeholder=\"Search anime, manga, themes, emotions…\"\n                                    value=\"\"\n                                    onChange={function onChange}\n                                    className=\"w-full h-10 pl-10 pr-3 bg-surface-2/70 border border-border rounded-ful...\"\n-                                   style={{caret-color:\"transparent\"}}\n                                  >\n                              ...\n                  ...\n"
+    }
+  ],
+  "finishedAt": "2026-05-14T12:55:11.155Z"
+}
