@@ -9,7 +9,7 @@ import {
 import { Stub } from '@/components/Stub';
 import { EmotionImpactBars } from '@/components/EmotionImpactBars';
 import { getTitleBySlug, getCharactersForTitle, getSimilarTitles } from '@/lib/queries';
-import { posterUrlForSlug } from '@/lib/poster-url';
+import { resolvePoster } from '@/lib/poster-url';
 import { resolveAnime, humanize } from '@/lib/seed-lookup';
 import { buildTVSeries } from '@animood/seo';
 
@@ -80,7 +80,7 @@ export default async function AnimeDetailPage({
     getSimilarTitles(data.id, 6),
   ]);
 
-  const poster = posterUrlForSlug(slug);
+  const poster = resolvePoster(data);
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://animood.app';
   const jsonLd = buildTVSeries({
     baseUrl,
@@ -305,7 +305,7 @@ export default async function AnimeDetailPage({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {similar.map((s) => {
-              const sp = posterUrlForSlug(s.title.slug);
+              const sp = resolvePoster(s.title);
               return (
                 <Link key={s.title.id} href={`/anime/${s.title.slug}`} className="block">
                   <article className="lift-card overflow-hidden">

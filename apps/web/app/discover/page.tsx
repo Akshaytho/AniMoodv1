@@ -3,7 +3,7 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import { AppShell, RightRailEmotionalProfile, RightRailTrendingThisWeek } from '@/components/AppShell';
 import { getDiscoverResults, getAllEmotionsForFilter, type DiscoverFilter } from '@/lib/queries';
-import { posterUrlForSlug } from '@/lib/poster-url';
+import { resolvePoster } from '@/lib/poster-url';
 import { MOOD_PILLS } from '@/lib/nav';
 
 const EMOTION_COLOR_KEY: Record<string, string> = {
@@ -170,7 +170,7 @@ export default async function DiscoverPage({
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {results.map((r) => {
-            const poster = posterUrlForSlug(r.title.slug);
+            const poster = resolvePoster(r.title);
             return (
               <Link
                 key={r.title.id}

@@ -15,6 +15,7 @@
     "migrate": "tsx src/migrate.ts",
     "seed:budget": "tsx src/seed-budget.ts",
     "seed:xlsx": "tsx src/seed-from-xlsx.ts",
+    "backfill:posters": "tsx src/backfill-posters.ts",
     "studio": "drizzle-kit studio",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",

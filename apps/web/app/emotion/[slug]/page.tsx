@@ -8,7 +8,7 @@ import {
 } from '@/components/AppShell';
 import { Stub } from '@/components/Stub';
 import { getEmotionBySlug } from '@/lib/queries';
-import { posterUrlForSlug } from '@/lib/poster-url';
+import { resolvePoster } from '@/lib/poster-url';
 import { resolveEmotion, humanize } from '@/lib/seed-lookup';
 import { buildThing } from '@animood/seo';
 
@@ -95,7 +95,7 @@ export default async function EmotionPage({
             <h3 className="text-[13px] font-semibold mb-3">Top titles for this emotion</h3>
             <ol className="space-y-2.5">
               {data.titles.slice(0, 5).map((t, i) => {
-                const poster = posterUrlForSlug(t.title.slug);
+                const poster = resolvePoster(t.title);
                 return (
                   <li key={t.title.id}>
                     <Link
@@ -182,7 +182,7 @@ export default async function EmotionPage({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {data.titles.map((t) => {
-              const poster = posterUrlForSlug(t.title.slug);
+              const poster = resolvePoster(t.title);
               return (
                 <article key={t.title.id} className="lift-card overflow-hidden">
                   <Link href={`/anime/${t.title.slug}`} className="block">
