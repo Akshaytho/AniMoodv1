@@ -69,7 +69,8 @@ export const TRENDING: TrendingTitle[] = [
     slug: 'march-comes-in-like-a-lion',
     name: 'March Comes In Like a Lion',
     meta: 'Anime · 2016',
-    posterUrl: 'https://cdn.myanimelist.net/images/anime/13/82898l.webp',
+    // Verified via api.myanimelist.net/v2/anime/31646 — main_picture.large
+    posterUrl: 'https://cdn.myanimelist.net/images/anime/3/82899l.webp',
     score: 8.36,
     emotions: [
       { slug: 'loneliness', name: 'Loneliness', colorKey: 'loneliness' },
