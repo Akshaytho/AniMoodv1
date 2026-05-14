@@ -28,3 +28,6 @@ coverage
 *.log
 npm-debug.log*
 pnpm-debug.log*
+
+# Standalone tools have their own node_modules; don't track them
+tools/*/node_modules

@@ -42,15 +42,16 @@ export const NAV_SECTIONS: Array<{ title?: string; items: NavItem[] }> = [
 export interface MoodPill {
   slug: string;
   label: string;
+  emoji: string;
 }
 
 export const MOOD_PILLS: MoodPill[] = [
-  { slug: 'sad', label: 'Feeling Sad' },
-  { slug: 'motivation', label: 'Need Motivation' },
-  { slug: 'lonely', label: 'Lonely' },
-  { slug: 'overwhelmed', label: 'Overwhelmed' },
-  { slug: 'peace', label: 'Want peace' },
-  { slug: 'heartbroken', label: 'Heartbroken' },
-  { slug: 'existential', label: 'Existential' },
-  { slug: 'curious', label: 'Curious' },
+  { slug: 'sad', label: 'Feeling Sad', emoji: '🥺' },
+  { slug: 'motivation', label: 'Need Motivation', emoji: '🔥' },
+  { slug: 'lonely', label: 'Lonely', emoji: '🌙' },
+  { slug: 'overwhelmed', label: 'Overwhelmed', emoji: '🌊' },
+  { slug: 'peace', label: 'Want peace', emoji: '🍃' },
+  { slug: 'heartbroken', label: 'Heartbroken', emoji: '💔' },
+  { slug: 'existential', label: 'Existential', emoji: '🪐' },
+  { slug: 'curious', label: 'Curious', emoji: '✨' },
 ];

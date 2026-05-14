@@ -1,0 +1,13 @@
+{
+  "name": "@animood-tools/image-gen",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "OpenAI gpt-image-1 wrapper for AniMood atmospheric / mascot art (NOT for anime character variations — see [[animood-image-policy]])",
+  "scripts": {
+    "gen": "node generate.mjs"
+  },
+  "dependencies": {
+    "openai": "^4.77.0"
+  }
+}
